@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Versionamento/Estrutura/TrabalhoFinal/EstruturaDeDados",
-      "program": "c:/Versionamento/Estrutura/TrabalhoFinal/EstruturaDeDados/build/Debug/outDebug",
+      "cwd": "c:/Versionamento/Estrutura/EstruturaDeDados",
+      "program": "c:/Versionamento/Estrutura/EstruturaDeDados/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

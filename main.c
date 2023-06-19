@@ -42,6 +42,7 @@ Node* createNode(Actor actor) {
     node->left = NULL;
     node->right = NULL;
     node->color = 1; // New node is always red
+    node->parent = NULL;
     return node;
 }
 
@@ -57,7 +58,7 @@ Node* bstInsert(Node* root, Node* newNode) {
     return root;
 }
 
-void leftRotate(Node** root, Node* node) {
+void leftRotate(Node* root, Node* node) {
     Node* rightChild = node->right;
     node->right = rightChild->left;
 
@@ -68,15 +69,15 @@ void leftRotate(Node** root, Node* node) {
     rightChild->left = node;
     node->color = 0;
 
-    if (node == *root)
-        *root = rightChild;
+    if (node == root)
+        root = rightChild;
     else if (node == node->left)
         node->left = rightChild;
     else
         node->right = rightChild;
 }
 
-void rightRotate(Node** root, Node* node) {
+void rightRotate(Node* root, Node* node) {
     Node* leftChild = node->left;
     node->left = leftChild->right;
 
@@ -87,8 +88,8 @@ void rightRotate(Node** root, Node* node) {
     leftChild->right = node;
     node->color = 0;
 
-    if (node == *root)
-        *root = leftChild;
+    if (node == root)
+        root = leftChild;
     else if (node == node->right)
         node->right = leftChild;
     else
@@ -101,8 +102,8 @@ void flipColors(Node* node) {
     node->right->color = 0;
 }
 
-void fixRedRed(Node** root, Node* node) {
-    if (node == *root) {
+void fixRedRed(Node* root, Node* node) {
+    if (node == root) {
         node->color = 0;
         return;
     }
@@ -111,7 +112,8 @@ void fixRedRed(Node** root, Node* node) {
     Node* grandparent = NULL;
     Node* greatGrandparent = NULL;
 
-    while (node != *root && node->color == 1 && node->parent->color == 1) {
+    while (node != root && node->color == 1 && node->parent->color == 1) {
+    
         parent = node->parent;
         grandparent = parent->parent;
 
@@ -163,11 +165,11 @@ void fixRedRed(Node** root, Node* node) {
         }
     }
 
-    (*root)->color = 0;
+    root->color = 0;
 }
 
-void bstInsertWithFix(Node** root, Node* newNode) {
-    *root = bstInsert(*root, newNode);
+void bstInsertWithFix(Node* root, Node* newNode) {
+    root = bstInsert(root, newNode);
     fixRedRed(root, newNode);
 }
 
@@ -218,11 +220,9 @@ void readMoviesFile(MovieGraph* movieGraph, const char* filename) {
     while (fgets(line, sizeof(line), file) != NULL && movieCount < MAX_MOVIES) {
         char* token = strtok(line, "\t");
 
-        if (strcmp(token + 2, "movie") != 0)
-            continue; // Skip non-movie entries
-
         Movie movie;
         movie.id = atoi(token + 2);
+        strtok(NULL, "\t");
         strcpy(movie.primaryTitle, strtok(NULL, "\t"));
 
         movieGraph->movies[movieCount++] = movie;
@@ -281,16 +281,16 @@ void printGraphDot(MovieGraph* movieGraph) {
 
 int main() {
     ActorTree actorTree;
-    readActorsFile(&actorTree, "C:/Versionamento/Estrutura/TrabalhoFinal/EstruturaDeDados/name.basics.tsv");
+    readActorsFile(&actorTree, "C:/Versionamento/Estrutura/EstruturaDeDados/name.tsv");
 
     Node* root = NULL;
     for (int i = 0; i < actorTree.numActors; i++) {
         Node* newNode = createNode(actorTree.actors[i]);
-        bstInsertWithFix(&root, newNode);
+        bstInsertWithFix(root, newNode);
     }
 
     MovieGraph movieGraph;
-    readMoviesFile(&movieGraph, "C:/Versionamento/Estrutura/TrabalhoFinal/EstruturaDeDados/title.basics.tsv");
+    readMoviesFile(&movieGraph, "C:/Versionamento/Estrutura/EstruturaDeDados/titiles.tsv");
     buildMovieGraph(&movieGraph, &actorTree);
 
     printGraphDot(&movieGraph);
